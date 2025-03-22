@@ -1,30 +1,34 @@
-name: Terraform EC2 Deployment
+name: Manage EC2 Instance
 
 on:
   push:
     branches:
-      - destroy-ec2  # Trigger workflow on push to the `destroy-ec2` branch
+      - main  # Trigger workflow on push to the main branch
+  workflow_dispatch:
+    inputs:
+      action:
+        description: 'Action to perform (create or delete)'
+        required: true
+        default: 'create'
+        type: choice
+        options:
+          - create
+          - delete
 
 jobs:
-  destroy:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
 
-    - name: Debug AWS Credentials
-      run: |
-        echo "AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}"
-        echo "AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}"
-        echo "AWS_REGION: ${{ secrets.AWS_REGION }}"
-
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v2
       with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: ${{ secrets.AWS_REGION }}
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}  # Use the AWS_ACCESS_KEY_ID secret
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}  # Use the AWS_SECRET_ACCESS_KEY secret
+        aws-region: ${{ secrets.AWS_REGION }}  # Use the AWS_REGION secret
 
     - name: Set up Terraform
       uses: hashicorp/setup-terraform@v2
@@ -34,5 +38,18 @@ jobs:
     - name: Terraform Init
       run: terraform init
 
-    - name: Terraform Destroy
+    - name: Terraform Plan
+      run: terraform plan
+
+    - name: Create Instance
+      if: ${{ github.event.inputs.action == 'create' }}
+      run: terraform apply -auto-approve
+
+    - name: Output Public IP
+      if: ${{ github.event.inputs.action == 'create' }}
+      run: |
+        echo "EC2 Public IP: $(terraform output -raw public_ip)"
+
+    - name: Destroy Instance
+      if: ${{ github.event.inputs.action == 'delete' }}
       run: terraform destroy -auto-approve
