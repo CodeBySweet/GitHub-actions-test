@@ -43,7 +43,7 @@ resource "aws_instance" "example" {
   instance_type = "t2.micro"                    # Default instance type
   subnet_id     = data.aws_subnets.default.ids[0]  # Use the first default subnet
 
-  vpc_security_group_ids = [aws_security_group.default_sg.id]
+  vpc_security_group_ids = [aws_security_group.my_ec2_sg.id]
 
   tags = {
     Name = "ExampleEC2Instance"
