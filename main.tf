@@ -18,8 +18,8 @@ data "aws_subnets" "default" {
 
 # Use the default security group in the default VPC
 resource "aws_security_group" "my_ec2_sg" {
-  name        = "default-security-group"
-  description = "Default security group for EC2 instance"
+  name        = "my-ec2-security-group"  # Unique name
+  description = "Security group for EC2 instance"
   vpc_id      = data.aws_vpc.default.id
 
   ingress {
