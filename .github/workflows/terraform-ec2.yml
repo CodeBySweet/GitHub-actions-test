@@ -38,12 +38,8 @@ jobs:
     - name: Terraform Init
       run: terraform init
 
-    - name: Debug Input
-      run: |
-        echo "Action: ${{ github.event.inputs.action }}"
-
-    - name: List Terraform Resources
-      run: terraform state list
+    - name: Terraform Plan
+      run: terraform plan
 
     - name: Create Instance
       if: ${{ github.event.inputs.action == 'create' }}
@@ -53,10 +49,6 @@ jobs:
       if: ${{ github.event.inputs.action == 'create' }}
       run: |
         echo "EC2 Public IP: $(terraform output -raw public_ip)"
-
-    - name: Import Existing Instance
-      if: ${{ github.event.inputs.action == 'delete' }}
-      run: terraform import aws_instance.my_ec2_instance <instance-id>
 
     - name: Destroy Instance
       if: ${{ github.event.inputs.action == 'delete' }}
