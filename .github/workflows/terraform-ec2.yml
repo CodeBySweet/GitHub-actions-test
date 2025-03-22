@@ -1,7 +1,9 @@
 name: Terraform EC2 Deployment
 
 on:
-  workflow_dispatch:  # Allows manual triggering of the workflow
+  push:
+    branches:
+      - destroy-ec2  # Trigger workflow on push to the `destroy-ec2` branch
 
 jobs:
   destroy:
