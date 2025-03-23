@@ -50,10 +50,10 @@ jobs:
       - name: Install Checkov
         run: pip install checkov
 
-      # Step 7: Run Checkov Scan
+      # Step 7: Run Checkov Scan (Simplified Output)
       - name: Run Checkov Scan
         run: |
-          checkov -d . --soft-fail  # Scan the current directory and fail on critical issues
+          checkov -d . --quiet --severity HIGH,CRITICAL --soft-fail
 
       # Step 8: Create EC2 Instance (if action is 'create')
       - name: Create Instance
