@@ -46,9 +46,9 @@ jobs:
       - name: Terraform Plan
         run: terraform plan
 
-      # Step 6: Install Checkov
+      # Step 6: Install Checkov (Latest Version)
       - name: Install Checkov
-        run: pip install checkov
+        run: pip install --upgrade checkov
 
       # Step 7: Run Checkov Scan (Simplified Output)
       - name: Run Checkov Scan
